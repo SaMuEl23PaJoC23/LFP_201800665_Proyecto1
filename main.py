@@ -2,9 +2,14 @@ import tkinter
 import tkinter.font as tkFont
 import easygui
 from tkinter import DISABLED, END, NORMAL, StringVar, messagebox
+from analizarT import analizar
+from operacionesYgrafos import OperacionYgrafo
 
 Mensaje="Esperando Archivo..."
 ruta=""
+analizarArchivo=analizar()
+operar=OperacionYgrafo()
+resultado=[]
 
 #------------Ventana Principal--------
 VentanaRaiz = tkinter.Tk()
@@ -17,9 +22,8 @@ def Abrir():
     global ruta
     ruta=easygui.fileopenbox()
     
-    
     if ruta != None:
-        messagebox.showinfo("ALERT",">>Archivo cargado exitosamente<<")
+        messagebox.showinfo("--ALERT--",">> Archivo cargado exitosamente <<")
         archivoSeleccionado=open(ruta)
         textoArchivo=archivoSeleccionado.read()
         archivoSeleccionado.close()
@@ -27,45 +31,68 @@ def Abrir():
         areaTexto.delete("1.0",END)
         areaTexto.insert("1.0",textoArchivo)
         botonGuardar.config(state=NORMAL)
+        botonGuardarC.config(state=NORMAL)
+        botonAnalizar.config(state=NORMAL)
     else:
-        messagebox.showerror("ALERT","!!Archivo no seleccionado!!")
-
+        messagebox.showerror("--ALERT--","!! Archivo no seleccionado !!")
+#-----------------------------------------------------------------------------
 def analizarTextoPantalla():
-    pass
-
+    global resultado
+    texto=areaTexto.get("1.0",END)
+    if texto != "" and texto != "\n" and texto !="\s":
+        #resultado[--0, errores--  --1,operaciones--  --2,propiedades--]
+        resultado=analizarArchivo.analizarEntrada(texto)
+        #------------Inicia Calculo de operaciones--------------
+        if resultado[0]==[]:
+            operar.calcular(resultado[1])
+        else:
+            messagebox.showerror("--ALERT--","!! El archivo cuenta con error(es)!!\n\n        !!Verificar archivo de errores!!")
+        
+    else:
+        messagebox.showerror("--ALERT--","!! No hay texto a analizar !!")
+#-----------------------------------------------------------------------------
 def errores():
     pass
-
+#-----------------------------------------------------------------------------
 def guardar():
     archivoGuardar=open(ruta, 'w')
     archivoGuardar.write(areaTexto.get("1.0",END))
     archivoGuardar.close()
-    messagebox.showinfo("ALERT",">>Archivo -Guardado- <<")
-
+    messagebox.showinfo("--ALERT--",">> Archivo -Guardado- <<")
+#-----------------------------------------------------------------------------
+def guardarC():
+    if inputNombreArchivo.get() != "":
+        NomArchivo=inputNombreArchivo.get()+".lfp"
+        
+        archivoGuardar=open(NomArchivo, 'w')
+        archivoGuardar.write(areaTexto.get("1.0",END))
+        archivoGuardar.close()
+        messagebox.showinfo("--ALERT--",">> Archivo -Guardado- <<")
+    else:
+        messagebox.showerror("--ALERT--","!! Debe ingresar un nombre !!")
+#-----------------------------------------------------------------------------        
+def mensaje():
+    messagebox.showinfo("--Informacion--","\n--{ Lenguajes Formales y de programacion_A- }--\n\n       --{ Samuel Alejandro Pajoc Raymundo }--\n\n                          --{ 201800665 }--")
+#-----------------------------------------------------------------------------
 def guardarComo():
     VentanaGuardarC = tkinter.Tk()
     VentanaGuardarC.config(bg="chartreuse")
-    VentanaGuardarC.geometry("335x120")
-    #VentanaGuardarC.resizable(0,0)
-    VentanaGuardarC.title("Guardar como....")
+    VentanaGuardarC.geometry("305x80")
+    VentanaGuardarC.resizable(0,0)
+    VentanaGuardarC.title("Guardar como:")
     
     fontStyle = tkFont.Font(family="Times", size=14)
     subTitulo = tkinter.Label(VentanaGuardarC, text="Nombre del nuevo archivo:", bg="orange", font=fontStyle)
-    subTitulo.place(x=50, y=10)
+    subTitulo.place(x=25, y=10)
     
-    global nombreArchivoN
-    nombreArchivoN = StringVar()
-    inputNombreArchivo = tkinter.Entry(VentanaGuardarC, textvariable=nombreArchivoN, font=fontStyle)
-    inputNombreArchivo.place(x=45, y=80)
     
-    #agregar un boton para guardar/crear el archivo
-    #limpiar la entrada del nombre a guardar
+    global inputNombreArchivo
+    inputNombreArchivo = tkinter.Entry(VentanaGuardarC, font=fontStyle)
+    inputNombreArchivo.place(x=25, y=45)
     
-        
-        
+    botonG = tkinter.Button(VentanaGuardarC, text="Guardar", bg="cyan", font=fontStyle, command=guardarC)
+    botonG.place(x=230,y=40)
     
-
-
 #------------Ventana Menu Archivo--------
 def ventanaMenuArchivo():
     ventanaArchivo = tkinter.Tk()
@@ -89,10 +116,10 @@ def ventanaMenuArchivo():
     botonGuardar = tkinter.Button(ventanaArchivo, text="Guardar", bg="gold", font=fontStyle, command=guardar, state=DISABLED)
     botonGuardar.place(x=90,y=10)
 
-    botonGuardarC = tkinter.Button(ventanaArchivo, text="Guardar Como...", bg="yellow", font=fontStyle, command=guardarComo)
+    botonGuardarC = tkinter.Button(ventanaArchivo, text="Guardar Como...", bg="yellow", font=fontStyle, command=guardarComo, state=DISABLED)
     botonGuardarC.place(x=170,y=10)
     
-    botonAnalizar = tkinter.Button(ventanaArchivo, text="Analizar", bg="teal", font=fontStyle, state=DISABLED)
+    botonAnalizar = tkinter.Button(ventanaArchivo, text="Analizar", bg="teal", font=fontStyle, state=DISABLED, command=analizarTextoPantalla)
     botonAnalizar.place(x=670,y=10)
     
     botonErrores = tkinter.Button(ventanaArchivo, text="Errores", bg="purple", font=fontStyle, state=DISABLED)
@@ -116,11 +143,9 @@ def ventanaAyuda():
     botonManTecnico = tkinter.Button(ventanaAyuda, text="Manual Tecnico", bg="chartreuse", font=fontStyle)
     botonManTecnico.place(x=50,y=50)
     
-    botonInfo = tkinter.Button(ventanaAyuda, text="Temas de Ayuda", bg="red", font=fontStyle)
+    botonInfo = tkinter.Button(ventanaAyuda, text="Temas de Ayuda", bg="red", font=fontStyle, command=mensaje)
     botonInfo.place(x=45,y=90)
     
-
-
 #--------- Componentes (Ventana Principal) ---------
 fontStyle = tkFont.Font(family="Times", size=12)
 

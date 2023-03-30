@@ -17,7 +17,6 @@ class analizar():
         columna=0
         estado=0
         flagLista=False
-        i=0
         texto+="#"
         lexActual=""
         resultado=[]    #0, errores  1,operaciones  2,propiedades
@@ -28,12 +27,26 @@ class analizar():
         listaProp=[]    # Lista que almacena las propiedades y sus valores detectados
         flagProp=False  # Bandera Propiedades
         flagOp=False    # Bandera Operacion
-        Flag_IO=False   # Bandera para indicar si abrio/cerro una lista
+        Flag_IO=0   # Bandera para indicar si corchetes: abierto(s)/cerrado(os)
         propValidas=["texto","color-fondo-nodo","color-fuente-nodo","forma-nodo"]
         opValidas=["suma","resta","multiplicacion","division","potencia","raiz","inverso","seno","coseno","tangente","mod"]
+        simbolosP=["{","}","=","\"",":",".",",","[","]","-"]
+        OtrosSimbolos=[" ","\n","\t","#"]
+        errorParser=[]
 #--------------------------------inicia Automata----------------------------------------
         for caracter in texto:
             columna+=1
+            if self.EsLetra(caracter) == False:     #Verificacion si el caracter leido es Permitido o no.
+                if self.EsNumero(caracter)==False:  #Si no es Permitido, se marcara como error, lexema.
+                    if caracter not in simbolosP:
+                        if caracter not in OtrosSimbolos:
+                            lista=[caracter, "Error", fila, columna]
+                            errorParser.append(lista)
+                            print('-----------')
+                            print(caracter)
+                            print(ord(caracter))
+                            print('-----------')
+                            continue
             #print("estado:"+str(estado))
             #print(caracter)
 #-------------------Estado S0-------------------------------
@@ -51,7 +64,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "{", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "{", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S1-------------------------------
             elif estado==1:
@@ -60,6 +73,9 @@ class analizar():
                     
                 elif caracter=="}":
                     estado=20
+                
+                elif caracter==",":
+                    continue
                     
                 elif caracter=="\"":
                     estado=14
@@ -74,7 +90,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "{, }, \"", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "{, }, \"", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S2-------------------------------
             elif estado==2:
@@ -90,7 +106,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "\"", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "\"", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S3-------------------------------
             elif estado==3:
@@ -108,12 +124,15 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "letra", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "letra", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S4-------------------------------
             elif estado==4:
                 if self.EsLetra(caracter):
                     lexActual+=caracter.lower()
+                    
+                elif self.EsNumero(caracter):
+                    lexActual+=caracter
                 
                 elif caracter=="\"":
                     estado=5
@@ -128,7 +147,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "letra, \"", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "letra, \"", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S5-------------------------------
             elif estado==5:
@@ -150,7 +169,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, ":", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, ":", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S6-------------------------------
             elif estado==6:
@@ -162,7 +181,7 @@ class analizar():
                     estado=10
                 
                 elif caracter=="[":
-                    Flag_IO=True
+                    Flag_IO+=1
                     estado=2
                 
                 elif caracter ==" ":
@@ -175,7 +194,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "\", numero, [", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "\", numero, [", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S7-------------------------------
             elif estado==7:
@@ -193,7 +212,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "letra", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "letra", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S8-------------------------------
             elif estado==8:
@@ -206,7 +225,7 @@ class analizar():
                             listaAux.append(lexActual)
                             flagOp=False
                         else:
-                            lista=[lexActual, "Operacion Invalida", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                            lista=[lexActual, "Operacion Invalida", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                             listaErrores.append(lista)
                     estado=9
                         
@@ -220,7 +239,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "letra, \"", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "letra, \"", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S9-------------------------------
             elif estado==9:
@@ -237,7 +256,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "','", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "','", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S10-------------------------------
             elif estado==10:
@@ -253,20 +272,20 @@ class analizar():
                     estado=2
                     
                 elif caracter=="}":
-                    if Flag_IO==False:    
+                    if Flag_IO==0:    
                         listaAux.append(lexActual)
                         listaOp.append(listaAux)
                         listaAux=[]
                         estado=1
                         
                     else:
-                        lista=[caracter, "]", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                        lista=[caracter, "]", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                         listaErrores.append(lista)
                         
                 elif caracter=="]":
                     listaAux.append(lexActual)
                     listaAux.append("]")
-                    Flag_IO=False
+                    Flag_IO-=1
                     estado=13
                     
                 elif caracter ==" ":
@@ -279,7 +298,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "numero, '.', ',', }, ]", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "numero, '.', ',', }, ]", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S11-------------------------------
             elif estado==11:
@@ -297,7 +316,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "numero", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "numero", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #-------------------Estado S12-------------------------------
             elif estado==12:
@@ -309,20 +328,20 @@ class analizar():
                     estado=2
                 
                 elif caracter=="}":
-                    if Flag_IO==False:    
+                    if Flag_IO==0:    
                         listaAux.append(lexActual)
                         listaOp.append(listaAux)
                         listaAux=[]
                         estado=1
                         
                     else:
-                        lista=[caracter, "]", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                        lista=[caracter, "]", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                         listaErrores.append(lista)
                 
                 elif caracter=="]":
                     listaAux.append(lexActual)
                     listaAux.append("]")
-                    Flag_IO=False
+                    Flag_IO-=1
                     estado=13
                 
                 elif caracter ==" ":
@@ -335,7 +354,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "numero, ',', }, ]", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "numero, ',', }, ]", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)    
                 
 #-------------------Estado S13-------------------------------
@@ -366,7 +385,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "',', }", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "',', }", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)    
 #-------------------Estado S14-------------------------------
             elif estado==14:
@@ -384,7 +403,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "letra", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "letra", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)   
 #-------------------Estado S15-------------------------------
             elif estado==15:
@@ -399,7 +418,7 @@ class analizar():
                         listaProp.append(lexActual)
                         estado=16
                     else:
-                        lista=[lexActual, "Propiedad Invalida", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                        lista=[lexActual, "Propiedad Invalida", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                         listaErrores.append(lista)   
                     
                 elif caracter ==" ":
@@ -412,7 +431,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "letra, '-'", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "letra, '-'", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)   
 #-------------------Estado S16-------------------------------
             elif estado==16:
@@ -429,7 +448,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, ":", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, ":", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)   
 #-------------------Estado S17-------------------------------
             elif estado==17:
@@ -446,7 +465,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "\"", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "\"", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)   
 #-------------------Estado S18-------------------------------
             elif estado==18:
@@ -468,7 +487,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "letra", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "letra", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista) 
 #-------------------Estado S19-------------------------------
             elif estado==19:
@@ -493,7 +512,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "Texto:cualquier caracter || otraPropiedad:letra, \"", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "Texto:cualquier caracter || otraPropiedad:letra, \"", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista) 
 #-------------------Estado S20-------------------------------
             elif estado==20:
@@ -510,7 +529,7 @@ class analizar():
                 elif caracter == "\t":
                     columna+=3
                 else:
-                    lista=[caracter, "#", fila, columna]#[seDetecto,seEsperaba,X,Y]
+                    lista=[caracter, "#", fila, columna, "Est:"+str(estado)]#[seDetecto,seEsperaba,X,Y]
                     listaErrores.append(lista)
 #------------------------------------------------------------
         """print("----Operaciones----")
@@ -521,7 +540,15 @@ class analizar():
         for j in listaProp:
             print(j)"""
             
-        resultado.append(listaErrores)
+        print("====== Caractereres detectados fuera de su estado:====== ")
+        if listaErrores != []:
+            print(">>[ CaracterDetectado, CaracterEsperado(s), Fila, Columna, Estado: ]<<")
+            for i in listaErrores:
+                print(i)
+        else:
+            print("\n>>> No se detectaron errores por DESFASE\n")
+            
+        resultado.append(errorParser)
         resultado.append(listaOp)
         resultado.append(listaProp)
         

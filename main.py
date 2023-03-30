@@ -1,14 +1,20 @@
 import tkinter
 import tkinter.font as tkFont
 import easygui
-from tkinter import DISABLED, END, NORMAL, StringVar, messagebox
+from tkinter import DISABLED, END, NORMAL, messagebox
 from analizarT import analizar
-from operacionesYgrafos import OperacionYgrafo
+from operaciones import Operacion
+from grafos import CrearGrafo
+from mostrarError import mostrarErroresLex 
+
+import webbrowser as wb
 
 Mensaje="Esperando Archivo..."
 ruta=""
 analizarArchivo=analizar()
-operar=OperacionYgrafo()
+operar=Operacion()
+CrearG=CrearGrafo()
+CrearArchivoError=mostrarErroresLex()
 resultado=[]
 
 #------------Ventana Principal--------
@@ -44,15 +50,34 @@ def analizarTextoPantalla():
         resultado=analizarArchivo.analizarEntrada(texto)
         #------------Inicia Calculo de operaciones--------------
         if resultado[0]==[]:
-            operar.calcular(resultado[1])
+            ResOperar=operar.calcular(resultado[1])
+            print(">>>> FINALIZO Operaciones....")
+            CrearG.grafo(ResOperar,resultado[2])
+            wb.open_new(r'grafo\Operaciones.dot.png')
+            print(">>>> FINALIZO Grafos....")
+            botonErrores.config(state=DISABLED)
         else:
+            print(">> Lexemas no Validos<<")
+            print("[caracter, tipo, fila, columna]")
+            for i in resultado[0]:
+                print(i)
             messagebox.showerror("--ALERT--","!! El archivo cuenta con error(es)!!\n\n        !!Verificar archivo de errores!!")
+            botonErrores.config(state=NORMAL)
+            CrearArchivoError.escrituraArchivoError(resultado[0])
         
     else:
         messagebox.showerror("--ALERT--","!! No hay texto a analizar !!")
 #-----------------------------------------------------------------------------
 def errores():
-    pass
+    wb.open_new(r'erroresLex/ERRORES_201800665.lfp')
+    print(">>> deberia abrirse el archivo...")
+    messagebox.showinfo("--ALERT--",">> El archivo debe abrirse -MANUALMENTE-<<\nBuscar en:\nerroresLex/ERRORES_201800665.lfp")
+#-----------------------------------------------------------------------------
+def ManualUsuario():
+    wb.open_new(r'manuales\Manual de Usuario.pdf')
+#-----------------------------------------------------------------------------
+def ManualTecnico():
+    wb.open_new(r'manuales\Manual Tecnico.pdf')
 #-----------------------------------------------------------------------------
 def guardar():
     archivoGuardar=open(ruta, 'w')
@@ -122,7 +147,7 @@ def ventanaMenuArchivo():
     botonAnalizar = tkinter.Button(ventanaArchivo, text="Analizar", bg="teal", font=fontStyle, state=DISABLED, command=analizarTextoPantalla)
     botonAnalizar.place(x=670,y=10)
     
-    botonErrores = tkinter.Button(ventanaArchivo, text="Errores", bg="purple", font=fontStyle, state=DISABLED)
+    botonErrores = tkinter.Button(ventanaArchivo, text="Errores", bg="purple", font=fontStyle, state=DISABLED, command=errores)
     botonErrores.place(x=750,y=10)
     
 #------------Ventana Ayuda--------
@@ -137,10 +162,10 @@ def ventanaAyuda():
     #--------- Componentes (Ventana Menu Archivo) ---------
     fontStyle = tkFont.Font(family="Times", size=14)
     
-    botonManUsuario = tkinter.Button(ventanaAyuda, text="Manual Usuario", bg="chartreuse", font=fontStyle)
+    botonManUsuario = tkinter.Button(ventanaAyuda, text="Manual Usuario", bg="chartreuse", font=fontStyle, command=ManualUsuario)
     botonManUsuario.place(x=50,y=10)
     
-    botonManTecnico = tkinter.Button(ventanaAyuda, text="Manual Tecnico", bg="chartreuse", font=fontStyle)
+    botonManTecnico = tkinter.Button(ventanaAyuda, text="Manual Tecnico", bg="chartreuse", font=fontStyle, command=ManualTecnico)
     botonManTecnico.place(x=50,y=50)
     
     botonInfo = tkinter.Button(ventanaAyuda, text="Temas de Ayuda", bg="red", font=fontStyle, command=mensaje)

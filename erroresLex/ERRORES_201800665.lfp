@@ -1,0 +1,38 @@
+{
+	{ 
+		"No.": 1
+		"Descripcion-Token": {
+			"Lexema": !
+			"Tipo": Error
+			"Fila": 12
+			"Columna": 9
+		}
+	},
+	{ 
+		"No.": 2
+		"Descripcion-Token": {
+			"Lexema": *
+			"Tipo": Error
+			"Fila": 20
+			"Columna": 19
+		}
+	},
+	{ 
+		"No.": 3
+		"Descripcion-Token": {
+			"Lexema": ?
+			"Tipo": Error
+			"Fila": 24
+			"Columna": 10
+		}
+	},
+	{ 
+		"No.": 4
+		"Descripcion-Token": {
+			"Lexema": @
+			"Tipo": Error
+			"Fila": 60
+			"Columna": 5
+		}
+	}
+}

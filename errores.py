@@ -1,1 +1,0 @@
-#Aqui se armara la estructura JSON para los errores.

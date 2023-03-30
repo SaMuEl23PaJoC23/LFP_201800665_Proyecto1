@@ -1,0 +1,116 @@
+digraph errores { 
+rankdir=RL 
+N1 [label="
+-> 4.5", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N2 [label="
+-> 5.32", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N3 [label="Suma
+ 
+-> 9.82", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N4 [label="
+-> 40.5", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N5 [label="Inverso
+ 
+-> 0.024691358024691357", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N6 [label="
+-> 4.5", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N7 [label="
+-> 15.32", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N8 [label="
+-> 35.32", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N9 [label="Mod
+ 
+-> 4.5", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N10 [label="
+-> 10", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N11 [label="
+-> 3", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N12 [label="Potencia
+ 
+-> 1000.0", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N13 [label="
+-> 4.5", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N14 [label="
+-> 1000.0", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N15 [label="Resta
+ 
+-> -995.5", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N16 [label="
+-> 90", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N17 [label="Seno
+ 
+-> 1.0", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N18 [label="
+-> 1.0", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N19 [label="
+-> 5.32", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N20 [label="Suma
+ 
+-> 6.32", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N21 [label="
+-> 90", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N22 [label="Coseno
+ 
+-> 6.123233995736766e-17", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N23 [label="
+-> 6.123233995736766e-17", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N24 [label="
+-> 5", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N25 [label="Multiplicacion
+ 
+-> 3.061616997868383e-16", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N26 [label="
+-> 90", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N27 [label="Tangente
+ 
+-> 1.633123935319537e+16", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N28 [label="
+-> 1.633123935319537e+16", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N29 [label="
+-> 60", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N30 [label="Division
+ 
+-> 272187322553256.16", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N31 [label="
+-> 90", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N32 [label="
+-> 90", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N33 [label="Suma
+ 
+-> 180.0", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N34 [label="
+-> 180.0", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N35 [label="
+-> 3", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N36 [label="Raiz
+ 
+-> 5.64621617328617", shape=triangle, color=cyan, style=filled, fontcolor=black] 
+N3->N1; 
+N3->N2; 
+N5->N4; 
+N9->N6; 
+N9->N7; 
+N9->N8; 
+N12->N10; 
+N12->N11; 
+N15->N12; 
+N15->N13; 
+N15->N14; 
+N17->N16; 
+N20->N17; 
+N20->N18; 
+N20->N19; 
+N22->N21; 
+N25->N22; 
+N25->N23; 
+N25->N24; 
+N27->N26; 
+N30->N27; 
+N30->N28; 
+N30->N29; 
+N33->N31; 
+N33->N32; 
+N36->N33; 
+N36->N34; 
+N36->N35; 
+}
